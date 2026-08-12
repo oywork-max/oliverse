@@ -61,19 +61,20 @@
         <div class="modal-content">
             <h3>관리자 설정</h3>
             <div id="adminSettings"></div>
-            <button onclick="closeModal()">닫기</button>
+            <button onclick="closeModal()" style="margin-top: 20px; padding: 6px 12px; cursor: pointer;">닫기</button>
         </div>
     </div>
 
     <script>
-        const PASSWORD_HASH = "b46617e944737d2f97c079234857b293375b5b487e384661005a96f131a40348";
+        // 관리자 비밀번호 설정
+        const ADMIN_PASSWORD = "gemini";
 
         let apps = [
             {"id": 1, "title": "올리브캐시", "desc": "송금 및 환전 계산기", "url": "https://oywork-max.github.io/olivecash/", "icon": "💰", "show": true},
-            {"id": 2, "title": "올리브미팅룸", "desc": "중례 및 회의록 관리", "url": "https://oywork-max.github.io/olivemeetingroom/", "icon": "📝", "show": true},
-            {"id": 3, "title": "로스율 계산기", "desc": "매장 로스율 관리", "url": "https://oywork-max.github.io/loss/", "icon": "📉", "show": true},
-            {"id": 4, "title": "유통기한 검사기한 보기", "desc": "유통기한 검사 도구", "url": "https://oywork-max.github.io/bb/", "icon": "🕒", "show": true},
-            {"id": 5, "title": "휴식 순서 정하기", "desc": "컬러 기반 휴식 로테이션", "url": "https://oywork-max.github.io/abcd/", "icon": "🎨", "show": true}
+            {"id": 2, "title": "올리브미팅", "desc": "중례 및 회의록 관리", "url": "https://oywork-max.github.io/olivemeetingroom/", "icon": "📝", "show": true},
+            {"id": 3, "title": "로스 계산기", "desc": "매장 로스율 관리", "url": "https://oywork-max.github.io/loss/", "icon": "📉", "show": true},
+            {"id": 4, "title": "기한 검사기", "desc": "유통기한 검사 도구", "url": "https://oywork-max.github.io/bb/", "icon": "🕒", "show": true},
+            {"id": 5, "title": "휴무 순서기", "desc": "컬러 기반 휴무 로테이션", "url": "https://oywork-max.github.io/abcd/", "icon": "🎨", "show": true}
         ];
 
         function renderApps() {
@@ -90,16 +91,11 @@
             });
         }
 
-        async function checkAuth() {
+        function checkAuth() {
             const pwd = prompt("관리자 암호를 입력하세요:");
             if (!pwd) return;
 
-            const msgUint8 = new TextEncoder().encode(pwd);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-            if (hashHex === PASSWORD_HASH) {
+            if (pwd === ADMIN_PASSWORD) {
                 document.getElementById('adminModal').style.display = 'flex';
                 renderAdminSettings();
             } else {
@@ -111,8 +107,10 @@
             const settings = document.getElementById('adminSettings');
             settings.innerHTML = apps.map(app => `
                 <div style="margin-bottom: 10px;">
-                    <input type="checkbox" ${app.show ? 'checked' : ''} onchange="toggleApp(${app.id})">
-                    ${app.title}
+                    <label>
+                        <input type="checkbox" ${app.show ? 'checked' : ''} onchange="toggleApp(${app.id})">
+                        ${app.title}
+                    </label>
                 </div>
             `).join('');
         }
